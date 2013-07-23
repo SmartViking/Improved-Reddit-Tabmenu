@@ -3,7 +3,7 @@
 // @namespace   improvedreddittabmenu
 // @description A script that makes sure that tabs like 'new' and 'top' are in the tabmenu on all subreddit pages, like the comment section, and reducing the amount of clicks needed to navigate a subreddit. License: Mozilla Public License v2.0.
 // @include     /^https?://(www\.)?reddit\.com/.*$/
-// @version     1
+// @version     2
 // @grant       none
 // ==/UserScript==
 
@@ -37,8 +37,8 @@ var compact = window.location.pathname.match(/\.compact$/);
 
 var maketab = function (tabname, subreddit) {
     var baseurl = '//reddit.com/r/'+subreddit+'/',
-	link = document.createElement('a'),
-	li = document.createElement('li');
+        link = document.createElement('a'),
+        li = document.createElement('li');
     
     link.href = baseurl + tabname + (compact ? '/.compact' : '/');
     link.textContent = tabname;
@@ -47,38 +47,27 @@ var maketab = function (tabname, subreddit) {
     return li;
 };
 
-var get_tabnames = function (list) {
-    var tabnames = [];
-    if (list) {
-	var tabs = list.children;
-	for (var i=0; i < tabs.length; i++) {
-            tabnames[i] = tabs[i].textContent;
-	}
-    }
-    return tabnames;
-};
-
 var subredditlink = document.querySelector('.redditname a'),
     subreddit     = subredditlink && subredditlink.textContent;
 
 if (subreddit) {
     var tabmenu = document.querySelector('ul.tabmenu'),
-	tabnames = get_tabnames(tabmenu);
+        tabnames = [].map.call(tabmenu ? tabmenu.children : [], function (tab) { return tab.textContent; });
 
     if (!tabmenu) {
-	tabmenu = document.createElement('ul');
-	tabmenu.className = 'tabmenu';
+        tabmenu = document.createElement('ul');
+        tabmenu.className = 'tabmenu';
 
-	var tabmenu_container = compact ?
-		document.querySelector('#topbar .subtoolbar') :
-		document.querySelector('#header #header-bottom-left');
+        var tabmenu_container = compact ?
+                document.querySelector('#topbar .subtoolbar') :
+                document.querySelector('#header #header-bottom-left');
 
-	tabmenu_container.appendChild(tabmenu);
+        tabmenu_container.appendChild(tabmenu);
     }
 
     tabs.reverse();
     tabs.forEach(function (tabname) {
-	if (tabnames.indexOf(tabname) === -1) {
+        if (tabnames.indexOf(tabname) === -1) {
             tabmenu.insertBefore(maketab(tabname, subreddit), tabmenu.firstChild);
         }
     });
