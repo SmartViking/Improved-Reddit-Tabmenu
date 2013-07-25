@@ -47,7 +47,7 @@ var maketab = function (tabname, subreddit) {
     return li;
 };
 
-var subredditlink = document.querySelector('.redditname a'),
+var subredditlink = document.querySelector('body:not(.multi-page) .redditname a'),
     subreddit     = subredditlink && subredditlink.textContent;
 
 if (subreddit) {
